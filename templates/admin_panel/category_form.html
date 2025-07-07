@@ -1,0 +1,346 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block page_title %}
+{% if action == 'create' %}新建分类{% else %}编辑分类{% endif %}
+{% endblock %}
+
+{% block content %}
+<style>
+/* 现代化表单样式 */
+.modern-form {
+    background: transparent;
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.form-container {
+    max-width: 3xl;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.form-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+}
+
+.form-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+.form-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.form-title {
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.form-subtitle {
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.form-body {
+    padding: 2.5rem;
+}
+
+.form-section {
+    margin-bottom: 2.5rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e5e7eb;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.form-label .required {
+    color: #ef4444;
+    margin-left: 0.25rem;
+}
+
+.form-input, .form-textarea {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+    background: white;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.form-input:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.form-input:hover, .form-textarea:hover {
+    border-color: #d1d5db;
+}
+
+.form-help {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 2rem;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+}
+
+.btn-secondary {
+    background: white;
+    color: #374151;
+    border: 2px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: 2px solid transparent;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -3px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .form-body {
+        padding: 1.5rem;
+    }
+    
+    .form-actions {
+        padding: 1.5rem;
+        flex-direction: column;
+    }
+}
+
+/* 动画效果 */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-card {
+    animation: slideInUp 0.6s ease-out;
+}
+
+.form-section {
+    animation: slideInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.form-section:nth-child(1) { animation-delay: 0.1s; }
+</style>
+
+<div class="modern-form">
+    <div class="form-container">
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-card">
+                <!-- 表单头部 -->
+                <div class="form-header">
+                    <h1 class="form-title">
+                        {% if action == 'create' %}
+                            <i class="fas fa-folder-plus mr-3"></i>新建分类
+                        {% else %}
+                            <i class="fas fa-folder-open mr-3"></i>编辑分类
+                        {% endif %}
+                    </h1>
+                    <p class="form-subtitle">
+                        {% if action == 'create' %}
+                            创建一个新的设计模式分类，帮助用户更好地组织内容
+                        {% else %}
+                            更新分类信息，优化内容组织结构
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <!-- 表单主体 -->
+                <div class="form-body">
+                    <!-- 分类信息 -->
+                    <div class="form-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-info-circle mr-2 text-blue-500"></i>分类信息
+                        </h2>
+                        
+                        <div class="form-group">
+                            <label for="name" class="form-label">
+                                <i class="fas fa-tag mr-1"></i>分类名称<span class="required">*</span>
+                            </label>
+                            <input type="text" name="name" id="name" required
+                                   value="{% if category %}{{ category.name }}{% endif %}"
+                                   class="form-input"
+                                   placeholder="输入分类名称，如：交互设计、视觉设计等">
+                            <p class="form-help">分类名称应该简洁明了，能够准确概括包含的设计模式类型</p>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description" class="form-label">
+                                <i class="fas fa-align-left mr-1"></i>分类描述
+                            </label>
+                            <textarea name="description" id="description" rows="5"
+                                      class="form-textarea"
+                                      placeholder="详细描述这个分类的用途、包含的内容类型以及适用场景...">{% if category %}{{ category.description }}{% endif %}</textarea>
+                            <p class="form-help">可选，但建议填写。好的描述能帮助用户更好地理解这个分类的用途</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 操作按钮 -->
+                <div class="form-actions">
+                    <a href="{% url 'admin_panel:category_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-times mr-2"></i>取消
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save mr-2"></i>
+                        {% if action == 'create' %}创建分类{% else %}保存更改{% endif %}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 表单验证增强
+    const form = document.querySelector('form');
+    const requiredFields = form.querySelectorAll('[required]');
+    
+    requiredFields.forEach(field => {
+        field.addEventListener('blur', function() {
+            if (!this.value.trim()) {
+                this.style.borderColor = '#ef4444';
+                this.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+            } else {
+                this.style.borderColor = '#10b981';
+                this.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.1)';
+            }
+        });
+        
+        field.addEventListener('input', function() {
+            if (this.value.trim()) {
+                this.style.borderColor = '#10b981';
+                this.style.boxShadow = '0 0 0 3px rgba(16, 185, 129, 0.1)';
+            }
+        });
+    });
+    
+    // 字符计数器（可选功能）
+    const nameInput = document.getElementById('name');
+    const descriptionTextarea = document.getElementById('description');
+    
+    function addCharCounter(element, maxLength = null) {
+        const counter = document.createElement('div');
+        counter.className = 'text-xs text-gray-500 mt-1 text-right';
+        element.parentNode.appendChild(counter);
+        
+        function updateCounter() {
+            const length = element.value.length;
+            counter.textContent = maxLength ? `${length}/${maxLength}` : `${length} 个字符`;
+            
+            if (maxLength && length > maxLength) {
+                counter.style.color = '#ef4444';
+            } else {
+                counter.style.color = '#6b7280';
+            }
+        }
+        
+        element.addEventListener('input', updateCounter);
+        updateCounter();
+    }
+    
+    addCharCounter(nameInput, 50);
+    addCharCounter(descriptionTextarea, 500);
+});
+</script>
+{% endblock %} 

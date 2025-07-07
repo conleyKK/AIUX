@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="h-full bg-gray-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}管理面板 - AI UX Design Patterns{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="h-full">
+    <div class="min-h-full">
+        {% if user.is_authenticated %}
+        <!-- 侧边栏 -->
+        <div class="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0">
+            <div class="flex-1 flex flex-col min-h-0 bg-gray-800">
+                <div class="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
+                    <!-- Logo -->
+                    <div class="flex items-center flex-shrink-0 px-4">
+                        <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-brain text-white"></i>
+                        </div>
+                        <span class="ml-3 text-white text-lg font-semibold">管理面板</span>
+                    </div>
+                    
+                    <!-- 导航菜单 -->
+                    <nav class="mt-8 flex-1 px-2 space-y-1">
+                        <a href="{% url 'admin_panel:dashboard' %}" 
+                           class="text-gray-300 hover:bg-gray-700 hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-tachometer-alt mr-3"></i>
+                            仪表板
+                        </a>
+                        
+                        <a href="{% url 'admin_panel:pattern_list' %}" 
+                           class="text-gray-300 hover:bg-gray-700 hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-puzzle-piece mr-3"></i>
+                            设计模式
+                        </a>
+                        
+                        <a href="{% url 'admin_panel:category_list' %}" 
+                           class="text-gray-300 hover:bg-gray-700 hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-folder mr-3"></i>
+                            分类管理
+                        </a>
+                        
+                        <a href="{% url 'admin_panel:intro_edit' %}" 
+                           class="text-gray-300 hover:bg-gray-700 hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-pen-nib mr-3"></i>
+                            首页介绍内容
+                        </a>
+                        
+                        <a href="{% url 'patterns:index' %}" target="_blank"
+                           class="text-gray-300 hover:bg-gray-700 hover:text-white group flex items-center px-2 py-2 text-sm font-medium rounded-md">
+                            <i class="fas fa-external-link-alt mr-3"></i>
+                            查看网站
+                        </a>
+                    </nav>
+                </div>
+                
+                <!-- 用户信息 -->
+                <div class="flex-shrink-0 flex bg-gray-700 p-4">
+                    <div class="flex items-center">
+                        <div class="w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-white text-sm"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-white">{{ user.username }}</p>
+                            <a href="{% url 'admin_panel:password_change' %}" class="text-xs text-blue-300 hover:text-blue-500 mr-3">修改密码</a>
+                            <a href="{% url 'admin_panel:logout' %}" class="text-xs text-gray-300 hover:text-white">退出登录</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要内容区域 -->
+        <div class="md:pl-64 flex flex-col flex-1">
+            <main class="flex-1">
+                <!-- 页面标题 -->
+                {% block header %}
+                <div class="bg-white shadow">
+                    <div class="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
+                        <div class="py-6 md:flex md:items-center md:justify-between">
+                            <div class="flex-1 min-w-0">
+                                <h1 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+                                    {% block page_title %}管理面板{% endblock %}
+                                </h1>
+                            </div>
+                            <div class="mt-4 flex md:mt-0 md:ml-4">
+                                {% block header_actions %}{% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endblock %}
+
+                <!-- 消息提示 -->
+                {% if messages %}
+                <div class="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8 mt-4">
+                    {% for message in messages %}
+                    <div class="rounded-md p-4 mb-4 {% if message.tags == 'error' %}bg-red-50 border border-red-200{% elif message.tags == 'success' %}bg-green-50 border border-green-200{% else %}bg-blue-50 border border-blue-200{% endif %}">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                {% if message.tags == 'error' %}
+                                <i class="fas fa-exclamation-circle text-red-400"></i>
+                                {% elif message.tags == 'success' %}
+                                <i class="fas fa-check-circle text-green-400"></i>
+                                {% else %}
+                                <i class="fas fa-info-circle text-blue-400"></i>
+                                {% endif %}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm {% if message.tags == 'error' %}text-red-800{% elif message.tags == 'success' %}text-green-800{% else %}text-blue-800{% endif %}">
+                                    {{ message }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- 页面内容 -->
+                <div class="py-6">
+                    <div class="px-4 sm:px-6 lg:max-w-6xl lg:mx-auto lg:px-8">
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </main>
+        </div>
+        {% endif %}
+    </div>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

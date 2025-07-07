@@ -1,0 +1,404 @@
+{% extends 'base.html' %}
+
+{% block title %}AI UX Design Patterns{% endblock %}
+
+{% block content %}
+<style>
+/* 浮出动画效果 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+/* 卡片动画 - 可以通过JavaScript触发 */
+.card-animate {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease-out;
+}
+
+.card-animate.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 确保动画在页面加载时触发 */
+.animate-fade-in-up {
+    animation-fill-mode: both;
+}
+
+.main-fade-container.fade-in {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.fade-section {
+    transition: opacity 0.3s;
+}
+
+.fade-in-section {
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+
+.fade-out-section {
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+@keyframes curveFlow1 {
+    0% { filter: blur(32px); opacity: 0.7; transform: translateY(0) scaleY(1); }
+    40% { filter: blur(40px); opacity: 1; transform: translateY(-10px) scaleY(1.08); }
+    80% { filter: blur(32px); opacity: 0.8; transform: translateY(10px) scaleY(0.95); }
+    100% { filter: blur(32px); opacity: 0.7; transform: translateY(0) scaleY(1); }
+}
+@keyframes curveFlow2 {
+    0% { filter: blur(24px); opacity: 0.5; transform: translateY(0) scaleY(1); }
+    50% { filter: blur(32px); opacity: 0.7; transform: translateY(12px) scaleY(1.12); }
+    100% { filter: blur(24px); opacity: 0.5; transform: translateY(0) scaleY(1); }
+}
+@keyframes curveFlow3 {
+    0% { filter: blur(16px); opacity: 0.3; transform: translateY(0) scaleY(1); }
+    60% { filter: blur(24px); opacity: 0.5; transform: translateY(-8px) scaleY(0.92); }
+    100% { filter: blur(16px); opacity: 0.3; transform: translateY(0) scaleY(1); }
+}
+.dynamic-purple-svg .purple-curve1 {
+    animation: curveFlow1 7s ease-in-out infinite;
+}
+.dynamic-purple-svg .purple-curve2 {
+    animation: curveFlow2 9s ease-in-out infinite;
+}
+.dynamic-purple-svg .purple-curve3 {
+    animation: curveFlow3 11s ease-in-out infinite;
+}
+</style>
+
+<!-- 主要内容区域 - 黑色简洁风格 -->
+<div class="min-h-screen bg-black text-white main-fade-container">
+    <!-- 导航栏 -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="text-xl font-medium">AI UX Design Patterns</div>
+                <div class="flex items-center space-x-8">
+                    <a href="{% url 'admin_panel:dashboard' %}" class="text-white/70 hover:text-white transition-colors duration-200">管理</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="pt-20 pb-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <!-- 主标题 - 只在页面首次加载时动画 -->
+            <div class="mb-16 animate-fade-in-up" style="animation-delay: 0.1s; min-height: 4.5rem; margin-top:100px;">
+                <h1 class="text-5xl md:text-7xl lg:text-8xl font-light leading-none mb-8">
+                    {{ intro.title|default:'AI UX Design Patterns' }}
+                </h1>
+                {% if intro.subtitle %}
+                <div class="text-2xl text-white/80 font-light mb-4">{{ intro.subtitle }}</div>
+                {% endif %}
+                <p class="text-xl md:text-xl text-white/60 font-light max-w-4xl leading-relaxed">
+                    {{ intro.description|safe }}
+                </p>
+            </div>
+
+            <!-- 搜索框 - 只在页面首次加载时动画 -->
+            <div class="mb-8 animate-fade-in-up" style="animation-delay: 0.2s;">
+                <form method="get" class="max-w-md">
+                    <div class="relative">
+                        <input type="text" 
+                               name="search" 
+                               value="{{ search|default:'' }}"
+                               placeholder="搜索设计模式..." 
+                               autocomplete="off"
+                               autocorrect="off"
+                               autocapitalize="off"
+                               spellcheck="false"
+                               class="w-full bg-white/5 border border-white/20 rounded-full px-6 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40 focus:bg-white/10 transition-all duration-200">
+                        <button type="submit" 
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/10 hover:bg-white/20 rounded-full p-2 transition-colors duration-200">
+                            <svg class="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                <circle cx="11" cy="11" r="8"/>
+                                <path d="m21 21-4.35-4.35"/>
+                            </svg>
+                        </button>
+                        {% if search %}
+                        <a href="{% url 'patterns:index' %}" 
+                           class="absolute right-12 top-1/2 transform -translate-y-1/2 text-white/40 hover:text-white/60 transition-colors duration-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                <path d="M18 6L6 18"/>
+                                <path d="M6 6l12 12"/>
+                            </svg>
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% if selected_category %}
+                    <input type="hidden" name="category" value="{{ selected_category }}">
+                    {% endif %}
+                </form>
+            </div>
+
+            <!-- 状态指示 - 只在页面首次加载时动画 -->
+            <div class="text-white/40 text-sm font-light mb-8 animate-fade-in-up" style="animation-delay: 0.3s;">
+                目前共计整理 {{ patterns.count|default:"0" }} 个设计模式，全部基于实际业务场景需求。
+            </div>
+
+            <!-- 搜索结果提示 -->
+            {% if search %}
+            <div class="mb-8 animate-fade-in-up" style="animation-delay: 0.4s;">
+                <div class="text-white/60 text-sm">
+                    搜索 "{{ search }}" 的结果：找到 {{ patterns.count }} 个模式
+                    <a href="{% url 'patterns:index' %}{% if selected_category %}?category={{ selected_category }}{% endif %}" 
+                       class="text-white/40 hover:text-white/60 ml-2">清除搜索</a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 模式列表 -->
+    <div id="patterns" class="px-6 pb-20">
+        <div class="max-w-6xl mx-auto">
+            <!-- 分类筛选 - 只在页面首次加载时动画 -->
+            <div class="animate-fade-in-up sticky-category-bar" style="animation-delay:0.5s;position:sticky;top:60px;z-index:40;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,0.08);box-shadow:0 2px 8px rgba(0,0,0,0.04);margin:0;padding:0;">
+                <div class="flex flex-wrap gap-4 py-3">
+                    <button class="category-btn {% if not selected_category %}active bg-white text-black font-medium{% else %}text-white/40 hover:text-white hover:bg-white/20 font-normal{% endif %} px-4 py-2 rounded-full text-sm transition-all duration-200" 
+                            data-category="">All</button>
+                    {% for category in categories %}
+                    <button class="category-btn {% if selected_category == category.id|stringformat:'s' %}active bg-white text-black font-medium{% else %}text-white/40 hover:text-white hover:bg-white/20 font-normal{% endif %} px-4 py-2 rounded-full text-sm transition-all duration-200" 
+                            data-category="{{ category.id }}">{{ category.name }}</button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- 模式卡片网格 - 使用新的动画类 -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 fade-section" id="patterns-grid">
+                {% for pattern in patterns %}
+                <div class="pattern-card group cursor-pointer card-animate show" 
+                     data-category="{{ pattern.category.id }}" 
+                     onclick="window.location.href='{% url 'patterns:detail' pattern.id %}'"
+                     style="transition-delay: {{ forloop.counter0|add:1|floatformat:0 }}00ms;">
+                    <div class="transition-all duration-300">
+                        <!-- 卡片图片 -->
+                        <div class="aspect-[4/3] mb-6 overflow-hidden rounded-2xl bg-white/5">
+                            {% if pattern.cover_image %}
+                            <img src="{{ pattern.cover_image.url }}" 
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                 alt="{{ pattern.title }}">
+                            {% else %}
+                            <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/5 to-white/10">
+                                <div class="text-center">
+                                    <div class="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                                        <svg class="w-8 h-8 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-white/30 text-sm">Design Pattern</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- 卡片内容 -->
+                        <div class="space-y-3">
+                            <!-- 标题和分享 -->
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xl font-normal text-white group-hover:text-white/80 transition-colors duration-300">
+                                    {{ pattern.title }}
+                                </h3>
+                                <button onclick="event.stopPropagation(); sharePattern(this, '{% url 'patterns:detail' pattern.id %}')" 
+                                        class="flex items-center text-white/60 hover:text-white transition-colors duration-200 ml-4 flex-shrink-0">
+                                    <svg class="share-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                        <circle cx="18" cy="5" r="3"/>
+                                        <circle cx="6" cy="12" r="3"/>
+                                        <circle cx="18" cy="19" r="3"/>
+                                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- 分类和时间 -->
+                            <div class="text-sm text-white/40">
+                                {{ pattern.category.name }} - {{ pattern.updated_at|date:"Y.m.d" }}
+                            </div>
+
+                            <!-- 描述 -->
+                            <p class="text-white/60 text-sm leading-relaxed">
+                                {{ pattern.description|truncatewords:15 }}
+                            </p>
+
+                            <!-- 标签 -->
+                            {% if pattern.get_tags_list %}
+                            <div class="flex flex-wrap gap-2 mt-4">
+                                {% for tag in pattern.get_tags_list|slice:":3" %}
+                                <span class="text-xs text-white/30 bg-white/5 px-2 py-1 rounded border border-white/10">
+                                    {{ tag }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-2 text-center py-20 card-animate show">
+                    <div class="text-white/40 text-lg">No patterns found.</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="border-t border-white/10 px-6 py-12">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-white/40 text-sm mb-4 md:mb-0">
+                    © AI UX Design Patterns ｜经营 & 营销中台 @不减
+                </div>
+                <div class="flex items-center space-x-6">
+                    <a href="{% url 'admin_panel:dashboard' %}" class="text-white/40 hover:text-white text-sm transition-colors duration-200">管理</a>
+                    <a href="#" class="text-white/40 hover:text-white text-sm transition-colors duration-200">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+// 分类筛选功能
+document.addEventListener('DOMContentLoaded', function() {
+    // 页面整体淡入动效
+    document.querySelector('.main-fade-container').classList.add('fade-in');
+
+    const categoryBtns = document.querySelectorAll('.category-btn');
+    const patternCards = document.querySelectorAll('.pattern-card');
+    const patternsGrid = document.getElementById('patterns-grid');
+
+    // 页面加载完成后，触发卡片动画
+    setTimeout(() => {
+        const cards = document.querySelectorAll('.card-animate');
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('show');
+            }, index * 100);
+        });
+    }, 100);
+
+    categoryBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const selectedCategory = this.dataset.category;
+            
+            // 更新按钮状态
+            categoryBtns.forEach(b => {
+                b.classList.remove('active', 'bg-white', 'text-black', 'font-medium');
+                b.classList.add('text-white/40', 'hover:text-white', 'hover:bg-white/20', 'font-normal');
+            });
+            
+            this.classList.remove('text-white/40', 'hover:text-white', 'hover:bg-white/20', 'font-normal');
+            this.classList.add('active', 'bg-white', 'text-black', 'font-medium');
+            
+            // 只让卡片区有淡出淡入动效
+            if (patternsGrid) {
+                patternsGrid.classList.remove('fade-in-section');
+                patternsGrid.classList.add('fade-out-section');
+                setTimeout(() => {
+                    // 先隐藏所有卡片
+                    patternCards.forEach(card => {
+                        card.classList.remove('show');
+                        card.style.display = 'none';
+                    });
+                    // 延迟显示匹配的卡片
+                    let visibleIndex = 0;
+                    patternCards.forEach(card => {
+                        const cardCategory = card.dataset.category;
+                        
+                        if (selectedCategory === '' || cardCategory === selectedCategory) {
+                            card.style.display = 'block';
+                            setTimeout(() => {
+                                card.classList.add('show');
+                            }, visibleIndex * 100);
+                            visibleIndex++;
+                        }
+                    });
+                    patternsGrid.classList.remove('fade-out-section');
+                    patternsGrid.classList.add('fade-in-section');
+                }, 250);
+            }
+            
+            // 更新URL但不重新加载页面
+            const currentSearch = new URLSearchParams(window.location.search).get('search') || '';
+            let newUrl = window.location.pathname;
+            const params = new URLSearchParams();
+            
+            if (currentSearch) {
+                params.set('search', currentSearch);
+            }
+            
+            if (selectedCategory) {
+                params.set('category', selectedCategory);
+            }
+            
+            if (params.toString()) {
+                newUrl += '?' + params.toString();
+            }
+            
+            // 更新浏览器历史记录
+            window.history.pushState({}, '', newUrl);
+        });
+    });
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+
+// 分享功能
+function sharePattern(button, url) {
+    const fullUrl = window.location.origin + url;
+    const shareIcon = button.querySelector('.share-icon');
+    
+    navigator.clipboard.writeText(fullUrl).then(function() {
+        // 显示复制成功状态
+        button.classList.remove('text-white/60', 'hover:text-white');
+        button.classList.add('text-white');
+        
+        // 更换为对勾图标 - 使用简单的polyline
+        shareIcon.innerHTML = '<polyline points="9,11 12,14 22,4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
+        
+        // 2秒后恢复原状态
+        setTimeout(function() {
+            button.classList.remove('text-white');
+            button.classList.add('text-white/60', 'hover:text-white');
+            
+            // 恢复分享图标
+            shareIcon.innerHTML = '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>';
+        }, 2000);
+    }).catch(function(err) {
+        console.error('复制失败:', err);
+    });
+}
+</script>
+{% endblock %}

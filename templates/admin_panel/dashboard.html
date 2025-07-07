@@ -1,0 +1,214 @@
+{% extends 'admin_panel/base.html' %}
+
+{% block page_title %}仪表板{% endblock %}
+
+{% block content %}
+<!-- 统计卡片 -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+                        <i class="fas fa-puzzle-piece text-white"></i>
+                    </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">
+                            设计模式总数
+                        </dt>
+                        <dd class="text-lg font-medium text-gray-900">
+                            {{ total_patterns }}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+                        <i class="fas fa-folder text-white"></i>
+                    </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">
+                            分类总数
+                        </dt>
+                        <dd class="text-lg font-medium text-gray-900">
+                            {{ total_categories }}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
+                        <i class="fas fa-star text-white"></i>
+                    </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">
+                            推荐模式
+                        </dt>
+                        <dd class="text-lg font-medium text-gray-900">
+                            {{ featured_patterns }}
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+        <div class="p-5">
+            <div class="flex items-center">
+                <div class="flex-shrink-0">
+                    <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+                        <i class="fas fa-eye text-white"></i>
+                    </div>
+                </div>
+                <div class="ml-5 w-0 flex-1">
+                    <dl>
+                        <dt class="text-sm font-medium text-gray-500 truncate">
+                            今日访问
+                        </dt>
+                        <dd class="text-lg font-medium text-gray-900">
+                            --
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 快速操作 -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                快速操作
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <a href="{% url 'admin_panel:pattern_create' %}" 
+                   class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">
+                    <i class="fas fa-plus mr-2"></i>
+                    新建模式
+                </a>
+                <a href="{% url 'admin_panel:category_create' %}" 
+                   class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                    <i class="fas fa-folder-plus mr-2"></i>
+                    新建分类
+                </a>
+                <a href="{% url 'admin_panel:pattern_list' %}" 
+                   class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                    <i class="fas fa-list mr-2"></i>
+                    管理模式
+                </a>
+                <a href="{% url 'patterns:index' %}" target="_blank"
+                   class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+                    <i class="fas fa-external-link-alt mr-2"></i>
+                    查看网站
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-4 py-5 sm:p-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                系统信息
+            </h3>
+            <div class="space-y-3">
+                <div class="flex justify-between">
+                    <span class="text-sm text-gray-500">Django版本</span>
+                    <span class="text-sm text-gray-900">4.2.7</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-sm text-gray-500">数据库</span>
+                    <span class="text-sm text-gray-900">SQLite</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-sm text-gray-500">当前用户</span>
+                    <span class="text-sm text-gray-900">{{ user.username }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-sm text-gray-500">登录时间</span>
+                    <span class="text-sm text-gray-900">{{ user.last_login|date:"Y-m-d H:i" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 最近的设计模式 -->
+<div class="bg-white shadow rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+            最近的设计模式
+        </h3>
+        {% if recent_patterns %}
+        <div class="overflow-hidden">
+            <ul class="divide-y divide-gray-200">
+                {% for pattern in recent_patterns %}
+                <li class="py-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex-shrink-0">
+                            {% if pattern.cover_image %}
+                            <img class="h-10 w-10 rounded-lg object-cover" src="{{ pattern.cover_image.url }}" alt="{{ pattern.title }}">
+                            {% else %}
+                            <div class="h-10 w-10 rounded-lg bg-gray-200 flex items-center justify-center">
+                                <i class="fas fa-image text-gray-400"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 truncate">
+                                {{ pattern.title }}
+                            </p>
+                            <p class="text-sm text-gray-500 truncate">
+                                {{ pattern.category.name }} • {{ pattern.created_at|date:"m月d日" }}
+                            </p>
+                        </div>
+                        <div class="flex-shrink-0">
+                            <a href="{% url 'admin_panel:pattern_edit' pattern.id %}" 
+                               class="inline-flex items-center px-3 py-1 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                编辑
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="mt-4">
+            <a href="{% url 'admin_panel:pattern_list' %}" 
+               class="text-sm text-blue-600 hover:text-blue-500">
+                查看所有模式 →
+            </a>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <i class="fas fa-folder-open text-4xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500">还没有设计模式</p>
+            <a href="{% url 'admin_panel:pattern_create' %}" 
+               class="mt-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                创建第一个模式
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
